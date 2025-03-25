@@ -17,11 +17,11 @@
       </Label>
       <ImageView fx:id="mainImage" fitHeight="150.0" fitWidth="200.0" layoutX="250.0" layoutY="91.0" pickOnBounds="true" preserveRatio="true" />
       <TextField fx:id="guessLetter" layoutX="14.0" layoutY="308.0" />
-      <Button fx:id="sendGuess" layoutX="45.0" layoutY="344.0" mnemonicParsing="false" text="Probar Letra" />
+      <Button fx:id="sendGuess" layoutX="45.0" layoutY="344.0" mnemonicParsing="false" onAction="#onSendGuess" text="Probar Letra" />
       <ListView fx:id="letterChecks" layoutX="15.0" layoutY="66.0" prefHeight="200.0" prefWidth="149.0" />
       <ListView fx:id="listWords" layoutX="544.0" layoutY="66.0" prefHeight="200.0" prefWidth="71.0" />
       <ListView fx:id="listTries" layoutX="615.0" layoutY="66.0" prefHeight="200.0" prefWidth="71.0" />
       <Label fx:id="hiddenWord" layoutX="336.0" layoutY="312.0" />
-      <Button fx:id="reset" layoutX="63.0" layoutY="434.0" mnemonicParsing="false" text="Reset" />
+      <Button fx:id="reset" layoutX="63.0" layoutY="434.0" mnemonicParsing="false" onAction="#setReset" text="Reset" />
    </children>
 </AnchorPane>
