@@ -22,21 +22,29 @@ public class Controller {
 
     @FXML
     Label hiddenWord;
+    @FXML
+    Label loseLabel;
+    @FXML
+    Label winLabel;
 
     @FXML
-    Button sendGuess;
+    Button guess;
+    @FXML
+    Button solve;
     @FXML
     Button reset;
 
     @FXML
-    TextField guessLetter;
+    TextField guessText;
 
     @FXML
-    ListView<String> letterChecks;
+    ListView<String> checks = new ListView<>();
+
     @FXML
-    ListView<String> listWords;
+    ListView<String> listWords = new ListView<>();
+
     @FXML
-    ListView<String> listTries;
+    ListView<String> listTries = new ListView<>();
 
     MainDB dictDB = new MainDB("dict");
 
@@ -46,8 +54,15 @@ public class Controller {
 
     Random random = new Random();
 
+    int failedTries = 0;
+
+    boolean endRun = false;
+
+    boolean win = false;
+
     @FXML
     private void initialize(){
+        //Cargar las imagenes en la lista de imagenes disponibles
         String imagePath = "src/main/resources/com/cesar/ahorcado/img/";
         for (int i = 0; i < 8; i++) {
             try {
@@ -57,6 +72,118 @@ public class Controller {
             }
         }
 
+        loadImage();
+        getNewWord();
+    }
+
+    @FXML
+    private void setReset(){
+        endRun = false;
+        guessText.setEditable(true);
+        guess.setDisable(false);
+        winLabel.setVisible(false);
+        loseLabel.setVisible(false);
+        checks.getItems().clear();
+
+        listWords.getItems().add(currentWord);
+        listTries.getItems().add(win ? failedTries + " fallos" : "Perdiste");
+
+        win = false;
+        failedTries = 0;
+        loadImage();
+        getNewWord();
+    }
+
+    @FXML
+    private void onSolve(){
+        String triedWord = guessText.getText();
+        if (!endRun){
+            if (!triedWord.isEmpty()){
+                if (triedWord.toLowerCase().equals(currentWord)){
+                    StringBuilder temp = new StringBuilder();
+                    for (int i = 0; i < triedWord.length(); i++) {
+                        temp.append(triedWord.charAt(i)).append(" ");
+                    }
+
+                    hiddenWord.setText(temp.toString().toLowerCase());
+
+                    endRun = true;
+                    guessText.setEditable(false);
+                    guess.setDisable(true);
+                    winLabel.setVisible(true);
+                    win = true;
+                }else{
+                    failedTries++;
+                    loadImage();
+
+                    checks.getItems().add(triedWord + " no es la palabra");
+
+                    if (failedTries == 7){
+                        endRun = true;
+                        guessText.setEditable(false);
+                        guess.setDisable(true);
+                        loseLabel.setVisible(true);
+                    }
+                }
+            }
+        }
+    }
+
+    @FXML
+    private void onSendGuess(){
+        if (!endRun){
+            if (!guessText.getText().isEmpty()){
+                StringBuilder temp = new StringBuilder(hiddenWord.getText());
+                List<Integer> indexes = new ArrayList<>();
+                char letter = guessText.getText().toLowerCase().charAt(0);
+                boolean appears;
+
+                for (int i = 0; i < temp.length()/2; i++) {
+                    if (currentWord.charAt(i) == letter){
+                        indexes.add(i);
+                    }
+                }
+
+                if (!indexes.isEmpty()){
+                    for (int index : indexes){
+                        temp.setCharAt(index*2, letter);
+                    }
+
+                    appears = true;
+                    hiddenWord.setText(temp.toString());
+
+                    if (hiddenWord.getText().replace(" ", "").equals(currentWord)){
+                        endRun = true;
+                        guessText.setEditable(false);
+                        guess.setDisable(true);
+                        winLabel.setVisible(true);
+                        win = true;
+                    }
+                }else {
+                    failedTries++;
+                    loadImage();
+                    appears = false;
+
+                    if (failedTries == 7){
+                        endRun = true;
+                        guessText.setEditable(false);
+                        guess.setDisable(true);
+                        loseLabel.setVisible(true);
+                    }
+                }
+
+                checks.getItems().add(letter + " " + (appears ? "aparece" : "no aparece"));
+
+                guessText.setText("");
+            }
+        }
+    }
+
+    private void loadImage(){
+        mainImage.setImage(imageList.get(failedTries));
+    }
+
+    private void getNewWord(){
         int r = random.nextInt(581);
         try {
             currentWord = dictDB.executeQuery("SELECT PALABRA FROM PALABRA WHERE ID = " + r).getString(1);
@@ -64,15 +191,9 @@ public class Controller {
             throw new RuntimeException(e);
         }
 
+        hiddenWord.setText("_ ".repeat(currentWord.length()));
+
         System.out.println(currentWord);
-    }
-
-    @FXML
-    private void setReset(){
-    }
-    @FXML
-    private void onSendGuess(){
-
     }
 
     /*
