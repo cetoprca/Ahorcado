@@ -24,6 +24,12 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Missing library JDBC");
+            System.exit(1);
+        }
         launch();
     }
 }

@@ -192,8 +192,6 @@ public class Controller {
         }
 
         hiddenWord.setText("_ ".repeat(currentWord.length()));
-
-        System.out.println(currentWord);
     }
 
     /*
