@@ -36,4 +36,5 @@
             <Font name="System Bold" size="22.0" />
          </font>
       </Label>
+   <Label fx:id="tryCounter" layoutX="337.0" layoutY="66.0" text="0/7" />
 </AnchorPane>

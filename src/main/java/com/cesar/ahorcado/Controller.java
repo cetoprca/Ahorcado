@@ -26,6 +26,8 @@ public class Controller {
     Label loseLabel;
     @FXML
     Label winLabel;
+    @FXML
+    Label tryCounter;
 
     @FXML
     Button guess;
@@ -84,6 +86,7 @@ public class Controller {
         winLabel.setVisible(false);
         loseLabel.setVisible(false);
         checks.getItems().clear();
+        tryCounter.setText("0/7");
 
         listWords.getItems().add(currentWord);
         listTries.getItems().add(win ? failedTries + " fallos" : "Perdiste");
@@ -115,6 +118,7 @@ public class Controller {
                 }else{
                     failedTries++;
                     loadImage();
+                    tryCounter.setText(failedTries + "/7");
 
                     checks.getItems().add(triedWord + " no es la palabra");
 
@@ -163,6 +167,7 @@ public class Controller {
                     failedTries++;
                     loadImage();
                     appears = false;
+                    tryCounter.setText(failedTries + "/7");
 
                     if (failedTries == 7){
                         endRun = true;
